@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Records</title>
+</head>
+<body>
+    <h1>Registered Patients</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient[0] }}</td> <!-- ID -->
+                <td>{{ patient[1] }}</td> <!-- Name -->
+                <td>{{ patient[2] }}</td> <!-- Age -->
+                <td>{{ patient[3] }}</td> <!-- Address -->
+                <td>{{ patient[4] }}</td> <!-- Phone -->
+                <td>{{ patient[5] }}</td> <!-- Gender -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Symptoms</title>
+</head>
+<body>
+    <h1>Select Your Symptoms</h1>
+    <form action="/analyze" method="post">
+        {% for symptom in symptoms %}
+        <div>
+            <input type="checkbox" id="{{ symptom }}" name="symptoms" value="{{ symptom }}">
+            <label for="{{ symptom }}">{{ symptom }}</label>
+        </div>
+        {% endfor %}
+        <button type="submit">Analyze Symptoms</button>
+    </form>
+</body>
+</html>
+

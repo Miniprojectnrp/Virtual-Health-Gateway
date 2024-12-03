@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Appointment Payment</title>
+</head>
+<body>
+    <h1>Doctor Appointment Payment</h1>
+    <form action="{{ url_for('submit_payment') }}" method="POST">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="card_number">Card Number:</label>
+        <input type="text" id="card_number" name="card_number" required><br><br>
+        
+        <label for="expiry_date">Expiry Date (MM/YY):</label>
+        <input type="text" id="expiry_date" name="expiry_date" required><br><br>
+        
+        <label for="cvv">CVV:</label>
+        <input type="text" id="cvv" name="cvv" required><br><br>
+        
+        <button type="submit">Submit Payment</button>
+    </form>
+</body>
+</html>
