@@ -3,20 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synapse Gateway: Smart Patient Access</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Virtual Health Gateway</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Full-page background with gradient */
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #ff7e5f, #feb47b); /* Gradient background */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sticky Navigation Bar */
+        .navbar {
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .navbar a:hover {
+            background-color: #ff7e5f;
+            color: white;
+        }
+
+        /* Center the content vertically and horizontally */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 80%;
+            text-align: center;
+            color: white; /* White text for readability on gradient */
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Add shadow for text clarity */
+        }
+
+        /* Style for the button container */
+        .button-container {
+            margin-top: 20px;
+        }
+
+        /* Style for the button with a vibrant color */
+        .btn {
+            padding: 15px 30px;
+            background-color: #4CAF50; /* Bright green button */
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+            animation: buttonFadeIn 1s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: #45a049; /* Darker green on hover */
+            transform: scale(1.1); /* Slightly enlarge button on hover */
+        }
+
+        /* Animate button on page load */
+        @keyframes buttonFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Contact and Help Section with colorful background */
+        .contact-help {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            color: #333;
+        }
+
+        .contact-help h2 {
+            margin-bottom: 10px;
+            font-size: 30px;
+            color: #ff7e5f; /* Color matching the gradient */
+        }
+
+        .contact-help p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .contact-help a {
+            color: #ff7e5f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .contact-help a:hover {
+            text-decoration: underline;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background-color: #ffffff;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            border-radius: 10px;
+        }
+
+        .testimonial-item {
+            margin-bottom: 20px;
+        }
+
+        .testimonial-item p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .testimonial-item p:first-child {
+            font-style: italic;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer a {
+            color: #ff7e5f;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Call-to-Action Banner */
+        .cta-banner {
+            background-color: #ff7e5f;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        .cta-banner a {
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .cta-banner a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
 </head>
 <body>
-    <div class="background">
-        <div class="container">
-            <h1>Synapse Gateway: Smart Patient Access</h1>
-            <p class="description">Your gateway to a smarter healthcare experience.</p>
-            <div class="button-container">
-                <a href="#" class="btn">Doctor Info</a>
-                <a href="#" class="btn">Patient Info</a>
-            </div>
+    <!-- Sticky Navigation Bar -->
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+    </div>
+
+    <div class="container">
+        <h1>Welcome to Virtual Health Gateway</h1>
+        <div class="button-container">
+            <a href="/register" class="btn">Register as a Patient</a>
+            <a href="/doctor_login" class="btn">Login as a Doctor</a>
+            
         </div>
     </div>
+
+    <!-- Contact and Help Section -->
+    <div class="contact-help">
+        <h2>Need Help?</h2>
+        <p>If you have any questions or need assistance, please contact us:</p>
+        <p>Email: <a href="mailto:support@virtualhealth.com"><i class="fas fa-envelope"></i> support@virtualhealth.com</a></p>
+        <p>Phone: <a href="tel:+11234567890"><i class="fas fa-phone-alt"></i> +1 (123) 456-7890</a></p>
+        <p>For more information, visit our <a href="/help">Help Center</a>.</p>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="testimonials">
+        <h2>What Our Patients Say</h2>
+        <div class="testimonial-item">
+            <p>"This is the best health service I've ever used! It's fast and reliable!"</p>
+            <p>- Jane Doe</p>
+        </div>
+        <div class="testimonial-item">
+            <p>"I was able to book an appointment easily, and the doctors were very helpful."</p>
+            <p>- John Smith</p>
+        </div>
+    </div>
+
+    <!-- Call-to-Action Banner -->
+    <div class="cta-banner">
+        <p>Ready to take control of your health? <a href="/register">Sign Up Now!</a></p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Virtual Health Gateway. All rights reserved.</p>
+        <p><a href="/privacy-policy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+    </footer>
 </body>
 </html>
+
