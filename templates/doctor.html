@@ -1,17 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 36px;
+            text-align: center;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            margin: 20px;
+        }
+        .info {
+            margin-bottom: 20px;
+        }
+        .info p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .info strong {
+            color: #333;
+        }
+        a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 18px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Your appointment has been mapped to the following doctor:</h1>
-    <p>Department: {{ Department }}</p>
-    <p>Doctor: {{ doctor }}</p>
-    <p>Floor No.: {{ Floor }}</p>
-
-    <a href="/payment">Proceed to Payment</a>
+    <div class="container">
+        <h1>Doctor Information</h1>
+        <div class="info">
+            <p><strong>Disease:</strong> {{ disease }}</p>
+            <p><strong>Department:</strong> {{ department }}</p>
+            <p><strong>Doctor:</strong> {{ doctor }}</p>
+            <p><strong>Floor:</strong> {{ floor }}</p>
+            <p><strong>Assigned Time Slot:</strong> {{ assigned_slot }}</p>
+            <p><strong>Date:</strong> {{ date }}</p>
+        </div>
+        <a href="/payment">Proceed to Payment</a>
+    </div>
 </body>
 </html>
+
 
