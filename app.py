@@ -57,6 +57,25 @@ def register():
     # If GET request, render the registration page
     return render_template('register.html')
 
+# Route to process symptom selection
+@app.route('/diagnosis', methods=['POST'])
+def diagnosis():
+    selected_symptoms = request.form.getlist('symptom')  # Get a list of selected symptoms
+    
+    # Filter the symptom data based on selected symptoms
+    filtered_data = symptom_data[symptom_data['Symptom'].isin(selected_symptoms)]
+
+    # Check if any disease is found based on the symptoms
+    if filtered_data.empty:
+        message = "No disease found based on the selected symptoms."
+    else:
+        # Get department and floor number from the first matched disease (assuming unique diagnosis)
+        department = filtered_data.iloc[0]['Department']
+        floor_number = filtered_data.iloc[0]['Floor']
+        message = f"Based on your symptoms, a possible diagnosis is {filtered_data.iloc[0]['Disease']}. Please visit the {department} department on floor {floor_number} for further evaluation."
+
+    return render_template('diagnosis.html', message=message)
+
 # Route for symptoms page
 @app.route('/symptoms', methods=['GET', 'POST'])
 def symptoms():
@@ -68,25 +87,31 @@ def symptoms():
     return render_template('symptoms.html', symptoms=symptoms_list)
 
 # Analyze symptoms and suggest department
+# Route for symptom selection and analysis
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    selected_symptoms = request.form.getlist('symptoms')
+    selected_symptoms = request.form.getlist('symptom')
 
     # Filter diseases with selected symptoms
     filtered_diseases = symptom_data.copy()
     for symptom in selected_symptoms:
         filtered_diseases = filtered_diseases[filtered_diseases[symptom] == 1]
 
-    # Get the most probable disease, department, doctor, and floor
+    # Get the most probable disease, department, and floor
     if not filtered_diseases.empty:
         disease = filtered_diseases.iloc[0]['Disease']
         department = filtered_diseases.iloc[0]['Department']
         floor = filtered_diseases.iloc[0]['Floor']
+        message = f"Based on your symptoms, a possible diagnosis is {disease}. " \
+                  f"Please visit the {department} department on floor {floor} for further evaluation."
     else:
-        disease = "Unknown"
-        department = "General Medicine"
-        floor = "1"
+        disease = None
+        department = "General Medicine" 
+        floor = "1" 
+        message = "No specific disease found based on your symptoms. " \
+                  "Please consult a doctor in the General Medicine department."
 
+    
     # Map to doctor (based on department)
     doctor_mapping = {
         "General Medicine": "Dr. Smith",
@@ -100,13 +125,17 @@ def analyze():
         "Rheumatology": "Dr. Bose",
         "Hematology": "Dr. Sharma",
         "Nephrology": "Dr. Rao",
-        "Oncology": "Dr. Smith",  # Add more departments and doctors as needed
+        "Oncology": "Dr. Smith",
+        "ENT": "Dr. Singh",
+        "Surgery": "Dr. Sarkaar",
+        "Psichiatry": "Dr. Shyam",
+        "Optometry": "Dr. Siddharth"# Add more departments and doctors as needed
     }
     
     doctor = doctor_mapping.get(department, "Dr. Smith")
 
     # Render the doctor information page with department, doctor, and floor
-    return render_template('doctor.html', disease=disease, department=department, doctor=doctor, floor=floor)
+    return render_template('doctor.html', message=message, disease=disease, department=department, doctor=doctor, floor=floor)
 
 # Route for payment page
 @app.route('/payment')
