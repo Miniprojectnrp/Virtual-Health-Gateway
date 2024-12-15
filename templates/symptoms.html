@@ -3,19 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Symptoms</title>
+    <title>Symptoms Checker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <h1>Select Your Symptoms</h1>
-    <form action="/analyze" method="post">
-        {% for symptom in symptoms %}
-        <div>
-            <input type="checkbox" id="{{ symptom }}" name="symptoms" value="{{ symptom }}">
-            <label for="{{ symptom }}">{{ symptom }}</label>
+    <div class="symptom-background">
+        <div class="symptom-wrapper">
+            <h1 class="symptom-heading">Symptom Checker</h1>
+            <p class="symptom-description">
+                Select the symptoms you're experiencing and click "Analyze" to get insights.
+            </p>
+            <form action="/analyze" method="post" class="symptom-form">
+                <div class="symptom-grid">
+                    {% for symptom in symptoms %}
+                    <div class="symptom-item">
+                        <input type="checkbox" id="{{ symptom }}" name="symptoms" value="{{ symptom }}">
+                        <label for="{{ symptom }}">{{ symptom }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn-analyze">Analyze Symptoms</button>
+            </form>
         </div>
-        {% endfor %}
-        <button type="submit">Analyze Symptoms</button>
-    </form>
+    </div>
 </body>
 </html>
-

@@ -1,15 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diagnosis</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <h1>Diagnosis</h1>
-    <p>{{ message }}</p>
+    <div class="background">
+        <div class="container">
+            <h1>Diagnosis</h1>
+            <p class="message">{{ message }}</p>
 
-    {% if department %}
-        <p>Department: {{ department }}</p>
-        <p>Floor No.: {{ floor }}</p>
-    {% endif %}
+            {% if department %}
+            <div class="diagnosis-info">
+                <p><strong>Department:</strong> {{ department }}</p>
+                <p><strong>Floor No.:</strong> {{ floor }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 </body>
 </html>
