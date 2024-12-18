@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #ddc3c3;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #524d4d;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="submit"], input[type="reset"] {
+            width: 48%; /* Adjusted for side-by-side alignment */
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        input[type="submit"] {
+            background-color: #45b945; /* Light green for Login */
+            color: #000;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #062202;
+        }
+
+        input[type="reset"] {
+            background-color: #f73939; /* Light red for Reset */
+            color: #000;
+        }
+
+        input[type="reset"]:hover {
+            background-color: #e06060;
+        }
+
+        @media (max-width: 480px) {
+            form {
+                width: 90%;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px; /* Add spacing between buttons in smaller screens */
+            }
+
+            input[type="submit"], input[type="reset"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Doctor Login</h1>
+    <form action="{{ url_for('doctor_login') }}" method="POST">
+        <label for="doctor_name">Doctor Name:</label>
+        <input type="text" name="doctor_name" id="doctor_name" required><br>
+
+        <label for="department">Department:</label>
+        <input type="text" name="department" id="department" required><br>
+
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required><br>
+
+        <div class="button-group">
+            <input type="submit" value="Login">
+            <input type="reset" value="Reset">
+        </div>
+    </form>
+</body>
+</html>
