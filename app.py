@@ -1,7 +1,8 @@
 import pandas as pd
 import os
 import sqlite3
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for  # Import url_for here
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -15,13 +16,59 @@ if not os.path.exists(file_path):
 
 # Load the CSV file
 symptom_data = pd.read_csv(file_path)
+# Route for doctor login page
+@app.route('/doctor_login', methods=['GET', 'POST'])
+def doctor_login():
+    doctor_mapping = {
+        "Dr. Smith": {"specialization": "General Medicine", "username": "drsmith", "password": "password12345"},
+        "Dr. Sid": {"specialization": "General Medicine", "username": "drsid", "password": "password1234"},
+        "Dr. Sanjana": {"specialization": "General Medicine", "username": "drsanjana", "password": "password123"},
+        "Dr. Johnson": {"specialization": "Pulmonology", "username": "drjohnson", "password": "password12"},
+        "Dr. Lee": {"specialization": "Neurology", "username": "drlee", "password": "password1"},
+        # Add other doctors...
+    }
 
-# Route for home page
+    if request.method == 'POST':
+        doctor_name = request.form['doctor_name']
+        department = request.form['department']
+        username = request.form['username']
+        password = request.form['password']
+        
+        for doctor, info in doctor_mapping.items():
+            if info['specialization'] == department and info['username'] == username and info['password'] == password:
+                # After successful login, redirect to the doctor's dashboard
+                return redirect(url_for('doctor_dashboard', doctor_name=doctor))
+
+        return "Invalid credentials. Please try again."
+
+    return render_template('doctor_login.html')
+
+# Doctor mapping for departments
+doctor_mapping = {
+    "General Medicine": {"doctor": "Dr. Smith", "time_slots": ["10:00 AM", "11:00 AM", "2:00 PM"]},
+    "Cardiology": {"doctor": "Dr. Brown", "time_slots": ["9:00 AM", "1:00 PM", "3:00 PM"]},
+    "Dermatology": {"doctor": "Dr. Green", "time_slots": ["10:30 AM", "12:30 PM", "4:00 PM"]},
+}
+
+# Database setup: Create 'appointments' table if it doesn't exist
+conn = sqlite3.connect('database.db')
+cursor = conn.cursor()
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS appointments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        doctor TEXT,
+        date TEXT,
+        time_slot TEXT,
+        patient_id INTEGER
+    )
+''')
+conn.commit()
+conn.close()
+
 @app.route('/')
 def home():
     return render_template('home.html')
 
-# Route for patient registration
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -51,98 +98,82 @@ def register():
         conn.commit()
         conn.close()
 
-        # Redirect to symptoms page
         return redirect('/symptoms')
 
-    # If GET request, render the registration page
     return render_template('register.html')
 
-# Route to process symptom selection
-@app.route('/diagnosis', methods=['POST'])
-def diagnosis():
-    selected_symptoms = request.form.getlist('symptom')  # Get a list of selected symptoms
-    
-    # Filter the symptom data based on selected symptoms
-    filtered_data = symptom_data[symptom_data['Symptom'].isin(selected_symptoms)]
 
-    # Check if any disease is found based on the symptoms
-    if filtered_data.empty:
-        message = "No disease found based on the selected symptoms."
-    else:
-        # Get department and floor number from the first matched disease (assuming unique diagnosis)
-        department = filtered_data.iloc[0]['Department']
-        floor_number = filtered_data.iloc[0]['Floor']
-        message = f"Based on your symptoms, a possible diagnosis is {filtered_data.iloc[0]['Disease']}. Please visit the {department} department on floor {floor_number} for further evaluation."
-
-    return render_template('diagnosis.html', message=message)
-
-# Route for symptoms page
 @app.route('/symptoms', methods=['GET', 'POST'])
 def symptoms():
     if request.method == 'POST':
         selected_symptoms = request.form.getlist('symptoms')
-        return redirect('/analyze', code=307)  # Perform the analysis
+        return redirect('/analyze', code=307)
 
-    symptoms_list = list(symptom_data.columns[1:-3])  # All symptoms except Disease, Department, Floor, and Doctor
+    symptoms_list = list(symptom_data.columns[1:-3])
     return render_template('symptoms.html', symptoms=symptoms_list)
 
-# Analyze symptoms and suggest department
-# Route for symptom selection and analysis
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    selected_symptoms = request.form.getlist('symptom')
+    selected_symptoms = request.form.getlist('symptoms')
 
-    # Filter diseases with selected symptoms
     filtered_diseases = symptom_data.copy()
     for symptom in selected_symptoms:
         filtered_diseases = filtered_diseases[filtered_diseases[symptom] == 1]
 
-    # Get the most probable disease, department, and floor
     if not filtered_diseases.empty:
         disease = filtered_diseases.iloc[0]['Disease']
         department = filtered_diseases.iloc[0]['Department']
         floor = filtered_diseases.iloc[0]['Floor']
-        message = f"Based on your symptoms, a possible diagnosis is {disease}. " \
-                  f"Please visit the {department} department on floor {floor} for further evaluation."
     else:
-        disease = None
-        department = "General Medicine" 
-        floor = "1" 
-        message = "No specific disease found based on your symptoms. " \
-                  "Please consult a doctor in the General Medicine department."
+        disease = "Unknown"
+        department = "General Medicine"
+        floor = "1"
 
-    
-    # Map to doctor (based on department)
-    doctor_mapping = {
-        "General Medicine": "Dr. Smith",
-        "Pulmonology": "Dr. Johnson",
-        "Neurology": "Dr. Lee",
-        "Cardiology": "Dr. Patel",
-        "Endocrinology": "Dr. Gupta",
-        "Dermatology": "Dr. Roy",
-        "Infectious Disease": "Dr. Fernandes",
-        "Gastroenterology": "Dr. Thomas",
-        "Rheumatology": "Dr. Bose",
-        "Hematology": "Dr. Sharma",
-        "Nephrology": "Dr. Rao",
-        "Oncology": "Dr. Smith",
-        "ENT": "Dr. Singh",
-        "Surgery": "Dr. Sarkaar",
-        "Psichiatry": "Dr. Shyam",
-        "Optometry": "Dr. Siddharth"# Add more departments and doctors as needed
-    }
-    
-    doctor = doctor_mapping.get(department, "Dr. Smith")
+    doctor_info = doctor_mapping.get(department, {"doctor": "Dr. Smith", "time_slots": ["9:00 AM"]})
+    doctor = doctor_info["doctor"]
+    time_slots = doctor_info["time_slots"]
 
-    # Render the doctor information page with department, doctor, and floor
-    return render_template('doctor.html', message=message, disease=disease, department=department, doctor=doctor, floor=floor)
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    today = datetime.now().date()
 
-# Route for payment page
+    cursor.execute('''
+        SELECT time_slot FROM appointments
+        WHERE doctor = ? AND date = ?
+    ''', (doctor, str(today)))
+    booked_slots = [row[0] for row in cursor.fetchall()]
+
+    available_slot = None
+    for slot in time_slots:
+        if slot not in booked_slots:
+            available_slot = slot
+            break
+
+    if not available_slot:
+        today += timedelta(days=1)
+        available_slot = time_slots[0]
+
+    cursor.execute('''
+        INSERT INTO appointments (doctor, date, time_slot, patient_id)
+        VALUES (?, ?, ?, ?)
+    ''', (doctor, str(today), available_slot, 1))  # Replace 1 with actual patient ID logic
+    conn.commit()
+    conn.close()
+
+    return render_template(
+        'doctor.html',
+        disease=disease,
+        department=department,
+        doctor=doctor,
+        floor=floor,
+        assigned_slot=available_slot,
+        date=today
+    )
+
 @app.route('/payment')
 def payment():
     return render_template('payment.html')
 
-# Route for handling the payment form submission
 @app.route('/submit_payment', methods=['POST'])
 def submit_payment():
     name = request.form['name']
@@ -150,32 +181,54 @@ def submit_payment():
     expiry_date = request.form['expiry_date']
     cvv = request.form['cvv']
 
-    # Here, you would handle the payment processing logic (e.g., using a payment gateway API)
-    # For now, just print the data for testing
     print(f"Payment details submitted: {name}, {card_number}, {expiry_date}, {cvv}")
-    
-    # Redirect to a confirmation or success page
     return redirect('/payment_success')
 
-# Route for payment success page
 @app.route('/payment_success')
 def payment_success():
     return render_template('payment_success.html')
 
-# Route for displaying all patients
 @app.route('/patients')
 def patients():
-    # Connect to the database
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    
-    # Retrieve all patients from the database
     cursor.execute("SELECT * FROM patients")
     patient_list = cursor.fetchall()
     conn.close()
-    
-    # Render the patients data to a template
     return render_template('patients.html', patients=patient_list)
+ # Route for doctor's dashboard after successful login
+@app.route('/doctor_dashboard/<doctor_name>', methods=['GET', 'POST'])
+def doctor_dashboard(doctor_name):
+    # Retrieve doctor information (time slots, specialization, etc.)
+    doctor_info = doctor_mapping.get(doctor_name, {"doctor": "Dr. Smith", "time_slots": ["9:00 AM"], "specialization": "General Medicine"})
+    
+    # Retrieve appointments for the doctor
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    today = datetime.now().date()
+    
+    cursor.execute('''SELECT id, patient_id, time_slot, date FROM appointments WHERE doctor = ? AND date >= ? ORDER BY date, time_slot''', 
+                   (doctor_name, str(today)))
+    appointments = cursor.fetchall()
+    
+    # Fetch patient details for appointments
+    appointment_details = []
+    for appointment in appointments:
+        cursor.execute('SELECT name, age, phone FROM patients WHERE id = ?', (appointment[1],))
+        patient = cursor.fetchone()
+        appointment_details.append({
+            'appointment_id': appointment[0],
+            'patient_name': patient[0],
+            'patient_age': patient[1],
+            'patient_phone': patient[2],
+            'time_slot': appointment[2],
+            'date': appointment[3]
+        })
+    
+    conn.close()
 
-if __name__ == '__main__': 
+    return render_template('doctor_dashboard.html', doctor_name=doctor_name, doctor_info=doctor_info, appointments=appointment_details)
+
+if __name__ == '__main__':
     app.run(debug=True)
+
